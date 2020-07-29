@@ -4,5 +4,7 @@
 
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
+  #
+#  RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L] # 原路由规则，index.php后面没有问号
+  RewriteRule ^(.*)$ index.php?/$1 [QSA,PT,L] # 新路由规则，index.php后面增加问号，可以解决在阿帕奇下访问404的问题
 </IfModule>
