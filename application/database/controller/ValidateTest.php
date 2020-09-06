@@ -76,6 +76,17 @@ class ValidateTest extends Controller
             'email'         => '邮箱格式错误',
         ];
 
+        //可以不用传递message参数，提示信息系统默认，只是参数会显示英文，只是只需要如下操作即可
+        /*
+         * $rule = [
+            'name|姓名'  => 'require|max:25',
+            'age|年龄'   => 'number|between:1,120',
+            'email|邮箱' => 'email',
+          ];
+        这样也可以提示中文，而且可以省略提示消息部分的编码工作
+         */
+
+//        $res = $this->validate($data, $rule);
         $res = $this->validate($data, $rule, $message);
 
         if (true !== $res) {
@@ -114,6 +125,36 @@ class ValidateTest extends Controller
 
 //        $validate = Validate::make($rule)->message($message);
         $validate = Validate::make($rule, $message);
+        $result = $validate->check($data);
+
+        if (!$result) {
+            return [
+                'code' => 1,
+                'msg' => '参数验证失败：'.$validate->getError(),
+                'data' => []
+            ];
+        }
+        return [
+            'code' => 0,
+            'msg' => '参数验证成功',
+            'data' => $data
+        ];
+    }
+
+    /**
+     * 验证重复密码
+     * @return array
+     */
+    public function validateTest5()
+    {
+        $data = $this->request->post();
+
+        $rule = [
+            'password|密码' => 'require|min:6|max:16',
+            'repassword|重复密码' => 'require|confirm:password',
+        ];
+
+        $validate = Validate::make($rule);
         $result = $validate->check($data);
 
         if (!$result) {

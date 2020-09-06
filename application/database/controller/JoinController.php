@@ -29,6 +29,13 @@ class JoinController extends Controller
             ->where('p.id', '=', 1)
             ->select();
 
+        $data = Db::table('tp_user u')
+            ->leftJoin('tp_access a', 'a.user_id=u.id')
+            ->leftJoin('tp_role r', 'r.id=a.role_id')
+            ->field('u.username name, r.type')
+            ->where('u.id', '=', 20)
+            ->select();
+
         return [
             'code' => 0,
             'msg' => '查询成功',

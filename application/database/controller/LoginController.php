@@ -3,6 +3,7 @@
 namespace app\database\controller;
 
 use app\BaseController;
+use think\facade\Session;
 
 class LoginController extends BaseController
 {

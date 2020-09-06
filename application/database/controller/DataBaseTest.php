@@ -3,9 +3,11 @@ namespace app\database\controller;
 
 use app\database\model\User;
 use think\Controller;
+//use think\Db;
 use think\Db;
 use think\Exception;
 use think\facade\Log;
+use think\Request;
 
 class DataBaseTest extends Controller
 {
@@ -18,6 +20,7 @@ class DataBaseTest extends Controller
     public function getAllUser()
     {
         $data = Db::table('tp_user')->select();
+        $data = Db::table('tp_user')->find();
         return [
             'code' => 0,
             'msg' => '查询成功',
@@ -43,10 +46,14 @@ class DataBaseTest extends Controller
             ->where('id', '19')
             ->column('id');
 
-        // 查询指定列
+        // 查询指定列，使用获取其查询数据，特别是索引字段的时候常用
         $data = Db::table('tp_user')
 //            ->where('id', '19')
-            ->field('id,username as name,email')
+            ->withAttr('status', function ($value) {
+                $status = [-1 => '删除', 0 => '禁用', 1 => '正常', 2 => '待审核'];
+                return $status[$value];
+            })
+            ->field('id,username as name,email,status')
             ->select();
 
         return [
@@ -86,6 +93,19 @@ class DataBaseTest extends Controller
         return [
             'code' => 0,
             'msg' => '插入成功',
+            'data' => ''
+        ];
+    }
+
+    public function softDel()
+    {
+        Db::table('tp_user')
+            ->where('id', '=', 225)
+            ->useSoftDelete('status', -1)
+            ->delete();
+        return [
+            'code' => 0,
+            'msg' => '删除成功',
             'data' => ''
         ];
     }
@@ -227,11 +247,24 @@ class DataBaseTest extends Controller
     }
 
     // -------------------------------  测试请求对象的使用 ---------------------------
-    public function testReq()
+    public function testReq(Request $request)
     {
-        var_dump($this->request->isPost());
-        var_dump($this->request->param());
-        var_dump($this->request->param(true));
+//        var_dump($this->request->isPost());
+//        var_dump($this->request->param());
+//        var_dump($this->request->param(true));
+//        var_dump($request->file('sss'));die();
+        $data = [
+            'data1' => $this->request->param(),
+            'data2' => $request->post(),
+            'data3' => \think\facade\Request::param(),
+            'data4' => \request()->param(),
+            'file' => $request->file('sss')
+        ];
+        return [
+            'code' => 0,
+            'msg' => '操作成功',
+            'data' => $data
+        ];
     }
 
     // 文件的下载
@@ -252,15 +285,15 @@ class DataBaseTest extends Controller
         $uid = $this->request->post('id');
         try{
             $user = Db::table('tp_user')
-                ->where('id', $uid)
-                ->field(true)
-                ->find();
+//                ->where('id', $uid)
+                ->field('id,username0')
+                ->select();
         } catch (Exception $e) {
 //            Log::record('数据库异常：'.$e->getMessage());//默认是info级别
             Log::error('数据库异常：'.$e->getMessage());//指定为error级别
             return [
                 'code' => 1,
-                'mag' => '查询失败',
+                'mag' => '查询失败'.$e->getMessage(),
                 'data' => ''
             ];
         }

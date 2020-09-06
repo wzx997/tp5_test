@@ -22,6 +22,7 @@ Route::get('db_test1', 'database/DataBaseTest/test');
 Route::post('getAllUser', 'database/DataBaseTest/getAllUser');
 Route::post('getUser', 'database/DataBaseTest/getUser');
 Route::post('insertOne', 'database/DataBaseTest/insertOne');
+Route::post('softDel', 'database/DataBaseTest/softDel');
 
 //使用model操作数据
 Route::post('modelGetAllUser', 'database/DataBaseTest/modelGetAllUser');
@@ -48,6 +49,7 @@ Route::post('validateTest2', 'database/ValidateTest/validateTest2');
 //Route::post('validateTest2', 'database/ValidateTest/validateTest2')->allowCrossDomain();
 Route::post('validateTest3', 'database/ValidateTest/validateTest3');
 Route::post('validateTest4', 'database/ValidateTest/validateTest4');
+Route::post('validateTest5', 'database/ValidateTest/validateTest5');
 
 //session和cookie的测试
 Route::get('sessionTest', 'database/SessionCookie/sessionTest');
@@ -71,6 +73,9 @@ Route::post('baseTest1', 'database/BaseTest/baseTest1');
 // 生成验证码
 Route::post('getCaptcha', 'database/LoginController/captcha');
 Route::post('login', 'database/LoginController/login');
+
+//测试多级嵌套路由，当一个模块下有文件夹时，这时匹配方式是：模块名/文件夹名.控制器名/方法名
+Route::post('test2', 'database/test.TestController/test2');
 
 //分组路由允许跨域
 //Route::group('v1', function () {

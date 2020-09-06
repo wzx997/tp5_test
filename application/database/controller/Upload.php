@@ -14,7 +14,8 @@ class Upload extends Controller
     public function upload1()
     {
         // 获取表单上传文件 例如上传了001.jpg
-        $file = request()->file('file1');
+        $file = $this->request->file('file1');
+        $desc = $this->request->post('desc');
         // 移动到框架应用根目录/uploads/ 目录下
         $info = $file->move( '../application/uploads');
 
@@ -24,7 +25,8 @@ class Upload extends Controller
                 'code' => 0,
                 'msg' => '上传成功',
                 'data' => [
-                    'filename' => $info->getFilename()
+                    'filename' => $info->getFilename(),
+                    'desc' => $desc
                 ]
             ];
         }
